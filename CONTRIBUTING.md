@@ -7,6 +7,6 @@
 Creator: @Me45y63, 5/5/2023
 
 # Roles
-Semekor - Design/UI/UX
-Larbi - Frontend/Javascript/UI
+Semekor - Design/UI/UX, 
+Larbi - Frontend/Javascript/UI, 
 Ike - Backend/Cloud
