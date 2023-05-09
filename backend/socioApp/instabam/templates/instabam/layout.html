@@ -19,7 +19,13 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{% url 'home'%}">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{% url 'admin:index' %}">Admin</a>
               </li>              
+              <li class="nav-item">
+                <a class="nav-link active" href="{% url 'post' %}">Post</a>
+              </li>
             </ul>
             {%if user.is_authenticated%}
               <h5 style="padding-right: 10px;" class="text-center">{{user.first_name}}</h5>
