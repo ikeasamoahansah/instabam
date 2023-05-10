@@ -11,7 +11,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">Instabam!</a>
+          <a class="navbar-brand" href="{% url 'home' %}">Instabam!</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -28,7 +28,7 @@
               </li>
             </ul>
             {%if user.is_authenticated%}
-              <h5 style="padding-right: 10px;" class="text-center">{{user.first_name}}</h5>
+              <a href="{% url 'profile' id=user.id %}" style="padding-right: 10px; text-decoration: blink; color: white;" class="text-center">{{user.first_name}}</a>
             {%endif%}
             <a class="nav-link active" href="{% url 'logout' %}">Logout</a>
           </div>
