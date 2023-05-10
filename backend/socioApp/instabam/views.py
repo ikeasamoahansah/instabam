@@ -9,9 +9,12 @@ from .forms import *
 # Create your views here.
 @login_required(login_url='/login')
 def home(request):
-    return render(request, "instabam/home.html", {
-        "posts": Post.objects.all()
-    })
+    if request.method == "POST":
+        post_id = request.POST.get("post-id")
+        post = Post.objects.filter(id=post_id).first()
+        if post and post.author == request.user:
+            post.delete()
+    return render(request, "instabam/home.html", {"posts": Post.objects.all()})
 
 def logout_view(request):
     logout(request)
@@ -60,4 +63,8 @@ def post_content(request):
     else:
         form = PostForm()
     return render(request, 'instabam/post.html', {"form":form})
+
+@login_required(login_url='/login')
+def profile(request, id):
+    return render(request, 'instabam/profile.html')
     
