@@ -3,6 +3,7 @@ from django.contrib.auth import logout, authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+import os
 from .models import *
 from .forms import *
 
@@ -14,7 +15,8 @@ def home(request):
         post = Post.objects.filter(id=post_id).first()
         if post and post.author == request.user:
             post.delete()
-    return render(request, "instabam/home.html", {"posts": Post.objects.all()})
+            os.remove(post.body.path)
+    return render(request, "instabam/home.html", {"posts": Post.objects.all().order_by('-updated_at')})
 
 def logout_view(request):
     logout(request)
