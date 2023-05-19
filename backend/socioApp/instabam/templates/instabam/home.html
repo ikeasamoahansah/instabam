@@ -14,11 +14,16 @@
                 <div class="card-body">
                     <p class="card-text">{{post.caption_text}}</p>
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-lg btn-primary">Like</button>
-                        </div>
-                    <small class="text-muted">Date created: {{post.created_at}}</small> </br>
-                    <small class="text-muted">Created by: {{post.author}}</small>
+                        {% if user == post.author %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-danger badge" name="post-id" value="{{post.id}}">Delete</button>
+                            </div>
+                        </form>
+                        {%endif%}
+                        <small class="text-muted">Date created: {{post.created_at}}</small> </br>
+                        <small class="text-muted">Created by: {{post.author}}</small>
                     </div>
                 </div>
             </div>

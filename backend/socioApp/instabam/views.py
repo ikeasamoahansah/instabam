@@ -3,15 +3,20 @@ from django.contrib.auth import logout, authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+import os
 from .models import *
 from .forms import *
 
 # Create your views here.
 @login_required(login_url='/login')
 def home(request):
-    return render(request, "instabam/home.html", {
-        "posts": Post.objects.all()
-    })
+    if request.method == "POST":
+        post_id = request.POST.get("post-id")
+        post = Post.objects.filter(id=post_id).first()
+        if post and post.author == request.user:
+            post.delete()
+            os.remove(post.body.path)
+    return render(request, "instabam/home.html", {"posts": Post.objects.all().order_by('-updated_at')})
 
 def logout_view(request):
     logout(request)
@@ -60,4 +65,8 @@ def post_content(request):
     else:
         form = PostForm()
     return render(request, 'instabam/post.html', {"form":form})
+
+@login_required(login_url='/login')
+def profile(request, id):
+    return render(request, 'instabam/profile.html')
     
