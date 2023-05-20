@@ -80,4 +80,22 @@ def profile(request, my_id):
         "profile": profile,
         "posts": Post.objects.all().order_by('-updated_at'),
     })
+
+
+@login_required(login_url='/login')
+def update_user(request):
+        
+    current_user = User.objects.get(id=request.user.id)
+
+    if request.method == "POST":
+        form = RegisterForm(request.POST or None, instance=current_user)
+        if form.is_valid():
+            form.save()
+            auth_login(request, current_user)
+            return redirect(f'/profile/u/{request.user.id}')
+    else:
+        form = RegisterForm()
     
+    return render(request, 'registration/update_user.html', {
+        "form": form
+    })
