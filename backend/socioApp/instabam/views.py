@@ -8,14 +8,18 @@ from .models import *
 from .forms import *
 
 # Create your views here.
-@login_required(login_url='/login')
-def home(request):
+
+def get_and_del(request):
     if request.method == "POST":
         post_id = request.POST.get("post-id")
         post = Post.objects.filter(id=post_id).first()
         if post and post.author == request.user:
             post.delete()
             os.remove(post.body.path)
+
+@login_required(login_url='/login')
+def home(request):
+    get_and_del(request)
     return render(request, "instabam/home.html", {"posts": Post.objects.all().order_by('-updated_at')})
 
 def logout_view(request):
@@ -67,6 +71,13 @@ def post_content(request):
     return render(request, 'instabam/post.html', {"form":form})
 
 @login_required(login_url='/login')
-def profile(request, id):
-    return render(request, 'instabam/profile.html')
+def profile(request, my_id):
+    
+    profile = User.objects.get(id=my_id)
+    get_and_del(request)
+    
+    return render(request, 'instabam/profile.html', {
+        "profile": profile,
+        "posts": Post.objects.all().order_by('-updated_at'),
+    })
     
