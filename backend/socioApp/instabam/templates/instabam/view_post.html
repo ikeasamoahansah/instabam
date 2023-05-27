@@ -1,0 +1,39 @@
+{% extends "instabam/layout.html" %}
+
+{%block body%}
+
+<h1>{{ post.author }}</h1>
+
+<!-- Display post content and other details -->
+<p>{{ post.caption_text }}</p>
+<div class='container'>
+    <img src="{{post.body.url}}" style="object-fit: contain; max-height: 15rem;" alt="image" class="img-thumbnail card-img-top img-responsive"/>
+</div>
+<p>Retweets: {{ retweet_count }}</p>
+
+<!-- Display replies -->
+<h2>Replies:</h2>
+{% if replies %}
+  <ul>
+    {% for reply in replies %}
+      <li>{{ reply.user.username }}: {{ reply.caption_text }}</li> 
+      <div class='container'>
+        {{reply.body}}
+      </div>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No replies yet.</p>
+{% endif %}
+
+<!-- Reply form -->
+<label for="text">Reply Content: </label>
+<form method="post" action="{% url 'reply' post.id %}">
+  {% csrf_token %}
+  <textarea id="text" name="caption_text" rows="3" cols="40" required></textarea>
+  <br>
+  <input type="submit" value="Reply">
+</form>
+
+
+{%endblock%}

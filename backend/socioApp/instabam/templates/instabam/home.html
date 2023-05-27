@@ -9,7 +9,9 @@
         {% for post in posts %}
         <div class="col">
             <div class="card shadow-sm">
-                <img src="{{post.body.url}}" style="object-fit: contain; max-height: 15rem;" alt="image" class="img-thumbnail card-img-top img-responsive">
+                <a href="{% url 'view_post' post.id %}">
+                    <img src="{{post.body.url}}" style="object-fit: contain; max-height: 15rem;" alt="image" class="img-thumbnail card-img-top img-responsive">
+                </a>
 
                 <div class="card-body">
                     <p class="card-text">{{post.caption_text}}</p>
@@ -18,10 +20,35 @@
                         <form method="post">
                             {% csrf_token %}
                             <div class="btn-group">
-                                <button type="submit" class="btn btn-success badge" name="post-id" value="{{post.id}}">Retweet</button>
-                            </div>
-                            <div class="btn-group">
                                 <button type="submit" class="btn btn-danger badge" name="post-id" value="{{post.id}}">Delete</button>
+                            </div>
+                        </form>
+                        {%endif%}
+                        <small class="text-muted">Date created: {{post.created_at}}</small> </br>
+                        <small class="text-muted">Created by: {{post.author}}</small>
+                    </div>
+                </div>
+            </div>
+      </div>
+        {% endfor %}
+    </div>  
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        {% for repost in reposts %}
+        <div class="col">
+            <div class="card shadow-sm">
+                <a href="{% url 'view_post' repost.id %}">
+                    <img src="{{repost.post.body.url}}" style="object-fit: contain; max-height: 15rem;" alt="image" class="img-thumbnail card-img-top img-responsive">
+                </a>
+
+                <div class="card-body">
+                    <p class="card-text">{{repost.caption_text}}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        {% if user == post.author %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-danger badge" name="post-id" value="{{repost.id}}">Delete</button>
                             </div>
                         </form>
                         {%endif%}

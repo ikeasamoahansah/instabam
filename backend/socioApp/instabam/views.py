@@ -1,8 +1,11 @@
-from django.shortcuts import redirect, render, HttpResponse
+from django.shortcuts import redirect, render, HttpResponse, get_object_or_404
 from django.contrib.auth import logout, authenticate
 from django.contrib.auth import login as auth_login
+from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+
+
 import os
 from .models import *
 from .forms import *
@@ -20,7 +23,11 @@ def get_and_del(request):
 @login_required(login_url='/login')
 def home(request):
     get_and_del(request)
-    return render(request, "instabam/home.html", {"posts": Post.objects.all().order_by('-updated_at')})
+    return render(request, "instabam/home.html", 
+    {
+        "posts": Post.objects.all().order_by('-updated_at'),
+        "reposts": RePost.objects.all()
+    })
 
 def logout_view(request):
     logout(request)
@@ -99,3 +106,39 @@ def update_user(request):
     return render(request, 'registration/update_user.html', {
         "form": form
     })
+
+@login_required(login_url='/login')
+@require_POST
+def repost(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    caption_text = request.POST.get('caption_text')
+    repost, created = RePost.objects.get_or_create(user=request.user, post=post, caption_text=caption_text)
+    if created:
+        repost.save()
+    return redirect("/home")
+
+@login_required(login_url='/login')
+@require_POST
+def reply(request, post_id):
+    if request.method == "POST":
+        post = get_object_or_404(Post, id=post_id)
+        caption_text = request.POST.get('caption_text')
+        reply = Reply(user=request.user, post=post, caption_text=caption_text)
+        reply.save()
+        return redirect(f"/post/{post_id}")
+    else:
+        return render(HttpResponse(
+            'None'
+        ))
+
+@login_required(login_url='/login')
+def view_post(request, post_id):
+    post= get_object_or_404(Post, id=post_id)
+    retweet_count = post.retweet_count()
+    replies = Reply.objects.filter(post=post)
+    context = {
+        'post': post,
+        'retweet_count': retweet_count,
+        'replies': replies,
+    }
+    return render(request, 'instabam/view_post.html', context)
