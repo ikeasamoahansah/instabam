@@ -23,11 +23,7 @@ def get_and_del(request):
 @login_required(login_url='/login')
 def home(request):
     get_and_del(request)
-    return render(request, "instabam/home.html", 
-    {
-        "posts": Post.objects.all().order_by('-updated_at'),
-        "reposts": RePost.objects.all()
-    })
+    return render(request, "instabam/home.html", {"posts": Post.objects.all().order_by('-updated_at')})
 
 def logout_view(request):
     logout(request)
@@ -109,16 +105,6 @@ def update_user(request):
 
 @login_required(login_url='/login')
 @require_POST
-def repost(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    caption_text = request.POST.get('caption_text')
-    repost, created = RePost.objects.get_or_create(user=request.user, post=post, caption_text=caption_text)
-    if created:
-        repost.save()
-    return redirect("/home")
-
-@login_required(login_url='/login')
-@require_POST
 def reply(request, post_id):
     if request.method == "POST":
         post = get_object_or_404(Post, id=post_id)
@@ -134,11 +120,11 @@ def reply(request, post_id):
 @login_required(login_url='/login')
 def view_post(request, post_id):
     post= get_object_or_404(Post, id=post_id)
-    retweet_count = post.retweet_count()
+    reply_count = post.reply_count()
     replies = Reply.objects.filter(post=post)
     context = {
         'post': post,
-        'retweet_count': retweet_count,
+        'reply_count': reply_count,
         'replies': replies,
     }
     return render(request, 'instabam/view_post.html', context)
