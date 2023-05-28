@@ -128,3 +128,19 @@ def view_post(request, post_id):
         'replies': replies,
     }
     return render(request, 'instabam/view_post.html', context)
+
+@login_required(login_url='/login')
+def search(request):
+    query = request.GET.get('q')
+
+    # Perform search for users and posts
+    users = User.objects.filter(username__icontains=query)
+    posts = Post.objects.filter(caption_text__icontains=query)
+
+    context = {
+        'query': query,
+        'users': users,
+        'posts': posts,
+    }
+
+    return render(request, 'instabam/search.html', context)

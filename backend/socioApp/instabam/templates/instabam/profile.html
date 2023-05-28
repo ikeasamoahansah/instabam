@@ -6,7 +6,7 @@
 <div class="container">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         {% for post in posts %}
-            {% if user == post.author %}
+            {% if user == profile %}
                 <div class="col">
                     <div class="card shadow-sm">
                         <img src="{{post.body.url}}" style="object-fit: contain; max-height: 15rem;" alt="image" class="img-thumbnail card-img-top img-responsive">
@@ -14,11 +14,13 @@
                         <div class="card-body">
                             <p class="card-text">{{post.caption_text}}</p>
                             <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'view_post' post.id %}">
+                                        <button type="submit" class="btn btn-success badge" name="reply-button">Reply</button>
+                                    </a>
+                                </div>
                                 <form method="post">
                                     {% csrf_token %}
-                                    <div class="btn-group">
-                                        <button type="submit" class="btn btn-success badge" name="post-id" value="{{post.id}}">Retweet</button>
-                                    </div>
                                     <div class="btn-group">
                                         <button type="submit" class="btn btn-danger badge" name="post-id" value="{{post.id}}">Delete</button>
                                     </div>
