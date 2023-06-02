@@ -9,11 +9,18 @@
         {% for post in posts %}
         <div class="col">
             <div class="card shadow-sm">
-                <img src="{{post.body.url}}" style="object-fit: contain; max-height: 15rem;" alt="image" class="img-thumbnail card-img-top img-responsive">
+                <a href="{% url 'view_post' post.id %}">
+                    <img src="{{post.body.url}}" style="object-fit: contain; max-height: 15rem;" alt="image" class="img-thumbnail card-img-top img-responsive">
+                </a>
 
                 <div class="card-body">
                     <p class="card-text">{{post.caption_text}}</p>
                     <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <a href="{% url 'view_post' post.id %}">
+                                <button type="submit" class="btn btn-success badge" name="reply-button">Reply</button>
+                            </a>
+                        </div>
                         {% if user == post.author %}
                         <form method="post">
                             {% csrf_token %}
@@ -30,6 +37,6 @@
       </div>
         {% endfor %}
     </div>  
-</div class="container">
+</div>
 
 {%endblock%}

@@ -1,8 +1,11 @@
-from django.shortcuts import redirect, render, HttpResponse
+from django.shortcuts import redirect, render, HttpResponse, get_object_or_404
 from django.contrib.auth import logout, authenticate
 from django.contrib.auth import login as auth_login
+from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+
+
 import os
 from .models import *
 from .forms import *
@@ -99,3 +102,45 @@ def update_user(request):
     return render(request, 'registration/update_user.html', {
         "form": form
     })
+
+@login_required(login_url='/login')
+@require_POST
+def reply(request, post_id):
+    if request.method == "POST":
+        post = get_object_or_404(Post, id=post_id)
+        caption_text = request.POST.get('caption_text')
+        reply = Reply(user=request.user, post=post, caption_text=caption_text)
+        reply.save()
+        return redirect(f"/post/{post_id}")
+    else:
+        return render(HttpResponse(
+            'None'
+        ))
+
+@login_required(login_url='/login')
+def view_post(request, post_id):
+    post= get_object_or_404(Post, id=post_id)
+    reply_count = post.reply_count()
+    replies = Reply.objects.filter(post=post)
+    context = {
+        'post': post,
+        'reply_count': reply_count,
+        'replies': replies,
+    }
+    return render(request, 'instabam/view_post.html', context)
+
+@login_required(login_url='/login')
+def search(request):
+    query = request.GET.get('q')
+
+    # Perform search for users and posts
+    users = User.objects.filter(username__icontains=query)
+    posts = Post.objects.filter(caption_text__icontains=query)
+
+    context = {
+        'query': query,
+        'users': users,
+        'posts': posts,
+    }
+
+    return render(request, 'instabam/search.html', context)
