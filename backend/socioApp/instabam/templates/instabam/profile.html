@@ -1,12 +1,24 @@
 {% extends "instabam/layout.html" %}
 
 {%block body%}
-<h1 class="text-center" style="padding-top: 10px;">Welcome to {{profile}}'s Profile Page!</h1>
-<br>
+{%if request.user != profile%}
+    <h1 class="text-center" style="padding-top: 10px;">Welcome to {{profile}}'s Profile Page!</h1>
+    <br>
+{%endif%}
 <div class="container">
+    {%if request.user != profile %}
+        <form method="post">
+            {% csrf_token %}
+        {%if profile in user.profile.followers.all %}
+            <button type="submit" class="btn btn-outline-danger" name="follow" value="unfollow">Unfollow</button>
+        {% else %}
+        <button type="submit" class="btn btn-outline-primary" name="follow" value="follow">Follow</button>
+        {% endif %}
+        </form>
+    {% endif %}
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         {% for post in posts %}
-            {% if user == profile %}
+            {% if user == post.author %}
                 <div class="col">
                     <div class="card shadow-sm">
                         <img src="{{post.body.url}}" style="object-fit: contain; max-height: 15rem;" alt="image" class="img-thumbnail card-img-top img-responsive">

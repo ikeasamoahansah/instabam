@@ -76,12 +76,27 @@ def post_content(request):
 @login_required(login_url='/login')
 def profile(request, my_id):
     
-    profile = User.objects.get(id=my_id)
+    user_to_follow = User.objects.get(id=my_id)
+    profile = UserProfile.objects.get(user=user_to_follow)
     get_and_del(request)
+
+    if request.method == "POST":
+        # current_user_profile = request.user.userprofile
+
+        action = request.POST["follow"]
+
+        if action == "unfollow":
+            # current_user_profile.follows.remove(profile)
+            unfollow_user(request, my_id)
+        elif action == "follow":
+            # current_user_profile.follows.add(profile)
+            follow_user(request, my_id)
+
+        # current_user_profile.save()
     
     return render(request, 'instabam/profile.html', {
         "profile": profile,
-        "posts": Post.objects.all().order_by('-updated_at'),
+        "posts": Post.objects.all().order_by('-updated_at')
     })
 
 
@@ -144,3 +159,33 @@ def search(request):
     }
 
     return render(request, 'instabam/search.html', context)
+
+@login_required(login_url='/login')
+def follow_user(request, user_id):
+    # Get the UserProfile instance of the current user
+    current_user_profile = request.user.userprofile
+
+    # Get the UserProfile instance of the user to be followed
+    user_to_follow = get_object_or_404(UserProfile, user=user_id)
+
+    # Add the user_to_follow to the followers of the current_user_profile
+    current_user_profile.follow(user_to_follow.user)
+    current_user_profile.save()
+
+
+    return redirect(f'profile/u/{user_id}')
+
+@login_required(login_url='/login')
+def unfollow_user(request, user_id):
+    # Get the UserProfile instance of the current user
+    current_user_profile = request.user.userprofile
+
+    # Get the UserProfile instance of the user to be unfollowed
+    user_to_unfollow = get_object_or_404(UserProfile, pk=user_id)
+
+    # Remove the user_to_unfollow from the followers of the current_user_profile
+    current_user_profile.unfollow(user_to_unfollow.user)
+    current_user_profile.save()
+
+
+    return redirect(f'profile/u/{user_id}')

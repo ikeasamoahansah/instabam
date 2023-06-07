@@ -35,18 +35,19 @@ class Reply(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    followers = models.ManyToManyField(User, related_name='following', blank=True)
+    follows = models.ManyToManyField(User, related_name='followed_by', symmetrical=False, blank=True)
 
     def follow(self, user):
-        self.followers.add(user)
+        self.follows.add(user)
 
     def unfollow(self, user):
-        self.followers.remove(user)
+        self.follows.remove(user)
+        
+    def __str__(self):
+        return f"{self.user.username}"
 
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
-
-post_save.connect(create_user_profile, sender=User) 
