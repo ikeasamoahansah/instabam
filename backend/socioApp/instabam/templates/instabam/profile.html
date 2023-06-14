@@ -1,50 +1,58 @@
 {% extends "instabam/layout.html" %}
 
 {%block body%}
-{%if request.user != profile%}
+{%if request.user != profile.user %}
     <h1 class="text-center" style="padding-top: 10px;">Welcome to {{profile}}'s Profile Page!</h1>
     <br>
 {%endif%}
+<p class="card-text">Followers: {{user_followers}} </p>
+<p class="card-text">Following: {{user_following}} </p>
 <div class="container">
-    {%if request.user != profile %}
-        <form method="post">
-            {% csrf_token %}
-        {%if profile in user.profile.followers.all %}
-            <button type="submit" class="btn btn-outline-danger" name="follow" value="unfollow">Unfollow</button>
-        {% else %}
-        <button type="submit" class="btn btn-outline-primary" name="follow" value="follow">Follow</button>
-        {% endif %}
-        </form>
+    {%if request.user != profile.user %}
+            <form action="{% url 'follow' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" value="{{user.username}}" name="follower" />
+                <input type="hidden" value="{{profile.user.username}}" name="user" />
+                <button class="btn btn-outline-primary" type="submit">{{button_text}}</button>
+            </form>
     {% endif %}
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-        {% for post in posts %}
-            {% if user == post.author %}
-                <div class="col">
-                    <div class="card shadow-sm">
-                        <img src="{{post.body.url}}" style="object-fit: contain; max-height: 15rem;" alt="image" class="img-thumbnail card-img-top img-responsive">
+        {%if request.user == profile.user %}
+            {% for post in posts %}
+                {% if user == post.author %}
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <img src="{{post.body.url}}" style="object-fit: contain; max-height: 15rem;" alt="image" class="img-thumbnail card-img-top img-responsive">
 
-                        <div class="card-body">
-                            <p class="card-text">{{post.caption_text}}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="btn-group">
-                                    <a href="{% url 'view_post' post.id %}">
-                                        <button type="submit" class="btn btn-success badge" name="reply-button">Reply</button>
-                                    </a>
-                                </div>
-                                <form method="post">
-                                    {% csrf_token %}
+                            <div class="card-body">
+                                <p class="card-text">{{post.caption_text}}</p>
+                                <p class="card-text">Likes: {{post.like_count}}</p>
+                                <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group">
-                                        <button type="submit" class="btn btn-danger badge" name="post-id" value="{{post.id}}">Delete</button>
+                                        <a href="{% url 'view_post' post.id %}">
+                                            <button type="submit" class="btn btn-success badge" name="reply-button">Reply</button>
+                                        </a>
                                     </div>
-                                </form>
-                                <small class="text-muted">Date created: {{post.created_at}}</small> </br>
-                                <small class="text-muted">Created by: {{post.author}}</small>
+                                    <div class="btn-group">
+                                        <a href="/like-post?post_id={{post.id}}">
+                                            <button type="submit" class="btn btn-primary badge" name="like-button">Like</button>
+                                        </a>
+                                    </div>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <div class="btn-group">
+                                            <button type="submit" class="btn btn-danger badge" name="post-id" value="{{post.id}}">Delete</button>
+                                        </div>
+                                    </form>
+                                    <small class="text-muted">Date created: {{post.created_at}}</small> </br>
+                                    <small class="text-muted">Created by: {{post.author}}</small>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {%endif%}
-        {% endfor %}
+                {%endif%}
+            {% endfor %}
+        {% endif %}
     </div>  
 </div class="container">
 {%endblock%}

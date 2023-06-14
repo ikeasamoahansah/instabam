@@ -5,3 +5,5 @@ from .models import *
 admin.site.register(Post)
 admin.site.register(Reply)
 admin.site.register(UserProfile)
+admin.site.register(LikePost)
+admin.site.register(FollowersCount)

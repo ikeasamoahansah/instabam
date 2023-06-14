@@ -17,6 +17,9 @@ class Post(models.Model):
     
     def reply_count(self):
         return Reply.objects.filter(post=self).count()
+    
+    def like_count(self):
+        return LikePost.objects.filter(post=self).count()
 
 
 class Reply(models.Model):
@@ -32,20 +35,30 @@ class Reply(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+class LikePost(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Liked by {self.user.username}"
+
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    follows = models.ManyToManyField(User, related_name='followed_by', symmetrical=False, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True)
+    profileimg = models.ImageField(upload_to='profile_images/', default='blank-profile-picture.jpg')
+    location = models.CharField(max_length=100, blank=True)
 
-    def follow(self, user):
-        self.follows.add(user)
-
-    def unfollow(self, user):
-        self.follows.remove(user)
-        
     def __str__(self):
-        return f"{self.user.username}"
+        return self.user.username
 
+
+class FollowersCount(models.Model):
+    follower = models.CharField(max_length=100)
+    user = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.user
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

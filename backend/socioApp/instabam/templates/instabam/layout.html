@@ -43,8 +43,9 @@
                   {{user.username}}
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'profile' user.id %}">Profile</a></li>
+                  <li><a class="dropdown-item" href="{% url 'profile' user.username %}">Profile</a></li>
                   <li><a class="dropdown-item" href="{% url 'update_user' %}">Update user</a></li>
+                  <li><a class="dropdown-item" href="{% url 'settings' %}">Settings</a></li>
                   <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                 </ul>
               </div>
