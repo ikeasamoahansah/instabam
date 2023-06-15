@@ -122,16 +122,15 @@ def update_user(request):
 @login_required(login_url='/login')
 def settings(request):
 
-    current_user = User.objects.get(username=request.user.username)
+    current_user = UserProfile.objects.get(user=request.user)
         
     if request.method == "POST":
         form = UpdateForm(request.POST, request.FILES, instance=current_user)
         if form.is_valid():
             form.save()
-            auth_login(request, current_user)
             return redirect(f'/profile/u/{request.user.username}')
     else:
-        form = UpdateForm()
+        form = UpdateForm(instance=current_user)
     return render(request, 'registration/settings.html', {"form":form})
 
 @login_required(login_url='/login')
