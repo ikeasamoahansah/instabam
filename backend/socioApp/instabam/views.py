@@ -4,26 +4,15 @@ from django.contrib.auth import login as auth_login
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-
-
-import os
 from .models import *
 from .forms import *
+from .helper_functions import *
 
-# Create your views here.
-
-def get_and_del(request):
-    if request.method == "POST":
-        post_id = request.POST.get("post-id")
-        post = Post.objects.filter(id=post_id).first()
-        if post and post.author == request.user:
-            post.delete()
-            os.remove(post.body.path)
 
 @login_required(login_url='/login')
 def home(request):
     get_and_del(request)
-    return render(request, "instabam/home.html", {"posts": Post.objects.all().order_by('-updated_at')})
+    return render(request, "instabam/home.html", {"posts": Post.objects.all().order_by('-created_at')})
 
 def logout_view(request):
     logout(request)
@@ -94,10 +83,7 @@ def profile(request, pk):
     
     return render(request, 'instabam/profile.html', {
         "profile": profile,
-        "posts": Post.objects.all().order_by('-updated_at'),
-        "button_text": button_text,
-        "user_followers": user_followers,
-        "user_following": user_following,
+        "posts": Post.objects.all().order_by('-created_at'),
     })
 
 
@@ -107,13 +93,13 @@ def update_user(request):
     current_user = User.objects.get(username=request.user.username)
 
     if request.method == "POST":
-        form = RegisterForm(request.POST or None, instance=current_user)
+        form = EditUserForm(request.POST or None, instance=current_user)
         if form.is_valid():
             form.save()
             auth_login(request, current_user)
-            return redirect(f'/profile/u/{request.user.username}')
+            return redirect(f'/profile/u/{request.user.id}')
     else:
-        form = RegisterForm()
+        form = EditUserForm(instance=current_user)
     
     return render(request, 'registration/update_user.html', {
         "form": form

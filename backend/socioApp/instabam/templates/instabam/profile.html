@@ -17,12 +17,11 @@
             </form>
     {% endif %}
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-        {%if request.user == profile.user %}
-            {% for post in posts %}
-                {% if user == post.author %}
-                    <div class="col">
-                        <div class="card shadow-sm">
-                            <img src="{{post.body.url}}" style="object-fit: contain; max-height: 15rem;" alt="image" class="img-thumbnail card-img-top img-responsive">
+        {% for post in posts %}
+            {% if user == profile and user == post.author%}
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="{{post.body.url}}" style="object-fit: contain; max-height: 15rem;" alt="image" class="img-thumbnail card-img-top img-responsive">
 
                             <div class="card-body">
                                 <p class="card-text">{{post.caption_text}}</p>
