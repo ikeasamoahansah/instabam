@@ -1,0 +1,13 @@
+{% extends "instabam/layout.html" %}
+
+{%block body%}
+<h1 class="text-center" style="padding-top: 10px;">Welcome to the Settings Page!</h1>
+
+<div class="form-group">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form}}
+        <button type="submit" class="btn btn-primary">Update!</button>
+    </form>
+</div>
+{%endblock%}

@@ -63,10 +63,23 @@ def post_content(request):
     return render(request, 'instabam/post.html', {"form":form})
 
 @login_required(login_url='/login')
-def profile(request, my_id):
+def profile(request, pk):
     
-    profile = User.objects.get(id=my_id)
+    user_to_follow = User.objects.get(username=pk)
+    profile = UserProfile.objects.get(user=user_to_follow)
     get_and_del(request)
+
+    follower = request.user.username
+    user = pk
+
+    if FollowersCount.objects.filter(follower=follower, user=user).first():
+        button_text = 'Unfollow'
+    else:
+        button_text = 'Follow' 
+
+        user_followers = len(FollowersCount.objects.filter(user=pk))
+        user_following = len(FollowersCount.objects.filter(follower=pk))
+
     
     return render(request, 'instabam/profile.html', {
         "profile": profile,
@@ -77,12 +90,13 @@ def profile(request, my_id):
 @login_required(login_url='/login')
 def update_user(request):
         
-    current_user = User.objects.get(id=request.user.id)
+    current_user = User.objects.get(username=request.user.username)
 
     if request.method == "POST":
         form = EditUserForm(request.POST or None, instance=current_user)
         if form.is_valid():
             form.save()
+            auth_login(request, current_user)
             return redirect(f'/profile/u/{request.user.id}')
     else:
         form = EditUserForm(instance=current_user)
@@ -90,6 +104,20 @@ def update_user(request):
     return render(request, 'registration/update_user.html', {
         "form": form
     })
+
+@login_required(login_url='/login')
+def settings(request):
+
+    current_user = UserProfile.objects.get(user=request.user)
+        
+    if request.method == "POST":
+        form = UpdateForm(request.POST, request.FILES, instance=current_user)
+        if form.is_valid():
+            form.save()
+            return redirect(f'/profile/u/{request.user.username}')
+    else:
+        form = UpdateForm(instance=current_user)
+    return render(request, 'registration/settings.html', {"form":form})
 
 @login_required(login_url='/login')
 @require_POST
@@ -104,6 +132,25 @@ def reply(request, post_id):
         return render(HttpResponse(
             'None'
         ))
+
+@login_required(login_url='/login')
+def like_post(request):
+    post_id = request.GET.get('post_id')
+
+    post = Post.objects.get(id=post_id)
+
+    like_filter = LikePost.objects.filter(post=post, user=request.user).first()
+
+    if like_filter == None:
+        new_like = LikePost.objects.create(post=post, user=request.user)
+        new_like.save()
+        post.save()
+        return redirect('/home')
+    else:
+        like_filter.delete()
+        post.save()
+        return redirect('/home')
+        
 
 @login_required(login_url='/login')
 def view_post(request, post_id):
@@ -132,3 +179,20 @@ def search(request):
     }
 
     return render(request, 'instabam/search.html', context)
+
+@login_required(login_url='/login')
+def follow(request):
+    if request.method == "POST":
+        follower = request.POST['follower']
+        user = request.POST['user']
+
+        if FollowersCount.objects.filter(follower=follower, user=user).first():
+            delete_follower = FollowersCount.objects.get(follower=follower, user=user)
+            delete_follower.delete()
+            return redirect(f'/profile/u/{user}')
+        else:
+            new_follower = FollowersCount.objects.create(follower=follower, user=user)
+            new_follower.save()
+            return redirect(f'/profile/u/{user}')
+    else:
+        return redirect('/home')
