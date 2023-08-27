@@ -6,7 +6,7 @@ from .helper_model import BaseModel
 import uuid
 
 class Post(BaseModel):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, auto_created=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     caption_text = models.CharField(blank=True, max_length=64)
     body = models.ImageField(blank=False, upload_to="images/")
@@ -22,7 +22,7 @@ class Post(BaseModel):
 
 
 class Reply(BaseModel):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, auto_created=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     caption_text = models.CharField(blank=True, max_length=64)
