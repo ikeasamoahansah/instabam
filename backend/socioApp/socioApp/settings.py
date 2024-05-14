@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'compressor',
 ]
 
 MIDDLEWARE = [
@@ -72,6 +73,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'socioApp.wsgi.application'
 
+COMPRESS_ROOT = BASE_DIR / 'static'
+
+COMPRESS_ENABLED = True
+
+STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
