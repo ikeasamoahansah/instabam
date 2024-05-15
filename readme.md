@@ -1,11 +1,7 @@
-# ABOUT
+### Instabam
 
-Instabam is a social media application that prioritises security and safety over vulnerability.
-Built with Django⚡️
+A light weight social media application built on top of Django⚡️
 
-# TECH STACK
-Frontend - HTML/Bootstrap
-Backend - Django
 
-Please read CONTRIBUTING.md before starting
+
 
