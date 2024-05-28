@@ -2,7 +2,35 @@
 
 {%block body%}
 
-<div class="container">
+
+{% for post in posts %}
+    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        <a href="{% url 'view_post' post.id %}">
+            <img class="rounded-t-lg" src="{{post.body.url}}" alt="image" />
+        </a>
+        <div class="p-5">
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{post.caption_text}}</p>
+            {% if user == post.author %}
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="post-id" value="{{post.id}}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                    Delete
+                    <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                    </svg>
+                </button>
+            </form>
+            {%endif%}
+            <p class="card-text">Likes: {{post.like_count}}</p>
+            <small class="text-muted">Date created: {{post.created_at}}</small> </br>
+            <small class="text-muted">Created by: {{post.author}}</small>
+        </div>
+    </div>
+{% endfor %}
+
+
+
+{% comment %} <div class="container">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         {% for post in posts %}
         <div class="col">
@@ -41,6 +69,6 @@
       </div>
         {% endfor %}
     </div>  
-</div>
+</div> {% endcomment %}
 
 {%endblock%}

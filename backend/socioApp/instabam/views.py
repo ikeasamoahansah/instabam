@@ -65,8 +65,8 @@ def post_content(request):
 @login_required(login_url='/login')
 def profile(request, pk):
     
-    user_to_follow = User.objects.get(username=pk)
-    profile = UserProfile.objects.get(user=user_to_follow)
+    user_to_follow = User.objects.get(id=pk)
+    prof = UserProfile.objects.get(user=user_to_follow)
     get_and_del(request)
 
     follower = request.user.username
@@ -82,7 +82,7 @@ def profile(request, pk):
 
     
     return render(request, 'instabam/profile.html', {
-        "profile": profile,
+        "profile": prof,
         "posts": Post.objects.all().order_by('-created_at'),
     })
 
