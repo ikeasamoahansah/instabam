@@ -168,6 +168,9 @@ def view_post(request, post_id):
 def search(request):
     query = request.GET.get('q')
 
+    if query == None:
+        return render(request, 'instabam/search.html', None)
+
     # Perform search for users and posts
     users = User.objects.filter(username__icontains=query)
     posts = Post.objects.filter(caption_text__icontains=query)
