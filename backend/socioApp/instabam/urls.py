@@ -16,7 +16,8 @@ urlpatterns = [
     path('profile/u/update_user', views.update_user, name="update_user" ),
     path('post/<uuid:post_id>/', views.view_post, name='view_post'),
     path('post/<uuid:post_id>/reply/', views.reply, name='reply'),
-
+    path('like-post/<uuid:post_id>/', views.like_post, name='like_post'),
+    
     path('reset_password/', 
          auth_views.PasswordResetView.as_view(template_name='registration/reset_password.html'), 
          name="reset_password"),

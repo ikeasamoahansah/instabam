@@ -134,8 +134,8 @@ def reply(request, post_id):
         ))
 
 @login_required(login_url='/login')
-def like_post(request):
-    post_id = request.GET.get('post_id')
+def like_post(request, post_id):
+    #post_id = request.GET.get(post_id)
 
     post = Post.objects.get(id=post_id)
 
