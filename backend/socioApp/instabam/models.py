@@ -5,6 +5,8 @@ from django.dispatch import receiver
 from .helper_model import BaseModel
 import uuid
 
+# TODO: Custom user class to enable users get profiles
+
 class Post(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
