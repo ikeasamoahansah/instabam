@@ -12,17 +12,17 @@ A light weight social media application built on top of Django⚡️
    pip install -r requirements.txt
    ```
 
-3. cd into backend/socioApp
+2. cd into backend/socioApp
    ```
    cd backend/socioApp
    ```
 
-5. Make migrations
+3. Make migrations
    ```
    python manage.py migrate
    ```
 
-7. Runserver and start
+4. Runserver and start
    ```
    python manage.py runserver
    ```
